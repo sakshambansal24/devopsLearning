@@ -1,0 +1,2 @@
+"""FastAPI dummy project package."""
+

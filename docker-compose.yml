@@ -1,0 +1,32 @@
+services:
+  api:
+    build: .
+    container_name: fastapi-devops-api
+    environment:
+      APP_NAME: FastAPI DevOps Demo
+      DATABASE_URL: postgresql+psycopg2://app_user:app_password@db:5432/app_db
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: fastapi-devops-db
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
